@@ -1,0 +1,4 @@
+export const STORE_KEYS = {
+  IS_AUTH: '@IS_AUTH',
+  USER_AUTH_TOKEN: '@USER_AUTH_TOKEN',
+};
