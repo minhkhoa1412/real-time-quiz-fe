@@ -1,11 +1,32 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import { useRxStore } from '~/hooks/Store';
+import { quizStore } from '~/stores/QuizStore/QuizStore';
 
 export const JoinQuizScreen = () => {
+  const { navigate } = useNavigation<any>();
   const [quizId, setQuizId] = useState('');
 
+  const activeQuiz = useRxStore({
+    defaultValue: quizStore.activeQuiz,
+    subject: quizStore.activeQuizSubject,
+  });
+
+  useEffect(() => {
+    if (activeQuiz) {
+      navigate('QuizScreen');
+    }
+  }, [activeQuiz]);
+
   const handleJoinQuiz = () => {
-    // Logic to join the quiz using the quizId
+    // 671d2f21ec14da2bc4858a32
+    try {
+      quizStore.getQuizByIdAndJoin(quizId);
+    } catch (error: any) {
+      console.error('Error joining quiz:', error);
+      Alert.alert(`Error joining quiz: ${error.message}}`);
+    }
   };
 
   return (
