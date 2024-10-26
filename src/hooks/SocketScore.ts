@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import io from 'socket.io-client';
+import { authStore } from '~/stores/AuthStore/AuthStore';
 
 const SOCKET_URL = 'http://localhost:3000/quiz';
 
@@ -14,7 +15,7 @@ export const useSocket = (quizId?: string) => {
 
     socket.on('connect', () => {
       console.log('Connected to socket server');
-      socket.emit('joinQuiz', { quizId });
+      socket.emit('joinQuiz', { quizId, userId: authStore.userInfo?.id });
     });
 
     socket.on('scoreUpdated', (data: any) => {
@@ -29,6 +30,7 @@ export const useSocket = (quizId?: string) => {
     setSocket(socket);
 
     return () => {
+      console.log('zooooooo')
       socket.disconnect();
     };
   }, [quizId]);
@@ -36,8 +38,8 @@ export const useSocket = (quizId?: string) => {
   const socketEmit = () => {
     if (socket) {
       socket.emit('joinQuiz', { quizId, score });
-    } 
-  }
+    }
+  };
 
   return { score, socket, socketEmit };
 };
