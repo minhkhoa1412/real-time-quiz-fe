@@ -2,11 +2,12 @@ import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 import { useRxStore } from '~/hooks/Store';
+import { authStore } from '~/stores/AuthStore/AuthStore';
 import { quizStore } from '~/stores/QuizStore/QuizStore';
 
 export const JoinQuizScreen = () => {
   const { navigate } = useNavigation<any>();
-  const [quizId, setQuizId] = useState('');
+  const [quizId, setQuizId] = useState('671d2f21ec14da2bc4858a32');
 
   const activeQuiz = useRxStore({
     defaultValue: quizStore.activeQuiz,
@@ -20,13 +21,16 @@ export const JoinQuizScreen = () => {
   }, [activeQuiz]);
 
   const handleJoinQuiz = () => {
-    // 671d2f21ec14da2bc4858a32
     try {
       quizStore.getQuizByIdAndJoin(quizId);
     } catch (error: any) {
       console.error('Error joining quiz:', error);
       Alert.alert(`Error joining quiz: ${error.message}}`);
     }
+  };
+
+  const handleLogout = () => {
+    authStore.logout();
   };
 
   return (
@@ -39,6 +43,7 @@ export const JoinQuizScreen = () => {
         onChangeText={setQuizId}
       />
       <Button title='Confirm' onPress={handleJoinQuiz} />
+      <Button title='Logout' onPress={handleLogout} />
     </View>
   );
 };

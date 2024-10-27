@@ -13,11 +13,12 @@ interface QuizContent {
 
 export interface IQuiz {
   id: string;
+  myScore?: number;
   title: string;
-  createdAt: Date;
-  updatedAt: Date;
   content: QuizContent[];
   participants: QuizParticipation[];
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface IQuizParticipation {
@@ -26,6 +27,5 @@ export interface IQuizParticipation {
   quizId: string;
   score: number;
   status: QuizParticipantStatus;
-  user: User;
-  quiz: Quiz;
+  user?: IUser;
 }

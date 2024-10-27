@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, Button, StyleSheet, Alert } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 import { useSocket } from '~/hooks/SocketScore';
 import { useRxStore } from '~/hooks/Store';
 import { quizStore } from '~/stores/QuizStore/QuizStore';
@@ -11,11 +13,20 @@ export const QuizScreen = () => {
   });
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const { score, socketEmit } = useSocket(activeQuiz?.id);
+  const { score, participants } = useSocket(
+    activeQuiz?.myScore,
+    activeQuiz?.id,
+  );
 
-  useEffect(() => {
-    socketEmit();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        if (activeQuiz) {
+          quizStore.completeQuiz(activeQuiz.id);
+        }
+      };
+    }, []),
+  );
 
   const handleOptionPress = async (selectedOption: string) => {
     try {
@@ -48,16 +59,26 @@ export const QuizScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.score}>Score: {score}</Text>
-      <Text style={styles.title}>{activeQuiz.title}</Text>
-      <Text style={styles.question}>{currentQuestion.question}</Text>
-      {currentQuestion.options.map((option, index) => (
-        <Button
-          key={index}
-          title={option}
-          onPress={() => handleOptionPress(option)}
-        />
-      ))}
+      <View style={{ marginBottom: 20 }}>
+        <Text style={styles.score}>Score: {score}</Text>
+        <Text style={styles.title}>{activeQuiz.title}</Text>
+        <Text style={styles.question}>{currentQuestion.question}</Text>
+        {currentQuestion.options.map((option, index) => (
+          <Button
+            key={option}
+            title={option}
+            onPress={() => handleOptionPress(option)}
+          />
+        ))}
+      </View>
+      <Text style={styles.textTitle}>Member in room</Text>
+      <ScrollView>
+        {participants?.map((participant) => (
+          <Text style={styles.text} key={participant.user.userName}>
+            Name: {participant.user.userName} - Score: {participant.score}
+          </Text>
+        ))}
+      </ScrollView>
     </View>
   );
 };
@@ -65,7 +86,7 @@ export const QuizScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     padding: 16,
   },
   score: {
@@ -82,5 +103,15 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginBottom: 16,
     textAlign: 'center',
+  },
+  textTitle: {
+    fontSize: 22,
+    marginBottom: 16,
+    fontWeight: 'bold',
+  },
+  text: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    marginBottom: 8,
   },
 });

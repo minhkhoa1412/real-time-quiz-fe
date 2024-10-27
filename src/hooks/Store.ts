@@ -21,19 +21,7 @@ export function useRxStore<T>({ defaultValue, subject, callback }: RxStore<T>) {
       valueSub.unsubscribe();
     };
   }, [callback, subject]);
+
+
   return data;
-}
-
-export function useAnimatedRxStore<T>({ defaultValue, subject }: RxStore<T>) {
-  const anim = useSharedValue<T>(defaultValue);
-  useEffect(() => {
-    const valueSub = subject.subscribe(v => {
-      anim.value = withTiming(v as any, { duration: 500 });
-    });
-
-    return () => {
-      valueSub.unsubscribe();
-    };
-  }, [anim, subject]);
-  return anim;
 }

@@ -27,7 +27,10 @@ class QuizStore extends Storable {
       if (quizRes.data) {
         const joinRes = await axiosInstance.post(`/quiz/${quizId}/join`);
         if (joinRes.data) {
-          this.activeQuiz = quizRes.data;
+          this.activeQuiz = {
+            ...quizRes.data,
+            myScore: joinRes.data.score,
+          };
         }
       }
     } catch (error: any) {
@@ -43,6 +46,16 @@ class QuizStore extends Storable {
       });
     } catch (error: any) {
       console.error('Error at updateScore:', error);
+      throw error;
+    }
+  }
+
+  async completeQuiz(quizId: string) {
+    try {
+      await axiosInstance.post(`/quiz/${quizId}/complete`);
+      this.activeQuiz = null;
+    } catch (error: any) {
+      console.error('Error at completeQuiz:', error);
       throw error;
     }
   }

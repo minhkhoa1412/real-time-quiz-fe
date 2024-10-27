@@ -43,6 +43,11 @@ class AuthStore extends Storable {
       this.userInfo = response.data.user;
     }
   }
+
+  logout() {
+    this.accessToken = null;
+    this.userInfo = null;
+  }
 }
 
 export const authStore = new AuthStore();
