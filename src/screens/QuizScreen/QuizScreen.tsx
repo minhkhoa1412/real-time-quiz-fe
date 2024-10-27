@@ -2,7 +2,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, Button, StyleSheet, Alert } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import { useSocket } from '~/hooks/SocketScore';
+import { useSocket } from '~/hooks/SocketQuiz';
 import { useRxStore } from '~/hooks/Store';
 import { quizStore } from '~/stores/QuizStore/QuizStore';
 
@@ -17,6 +17,8 @@ export const QuizScreen = () => {
     activeQuiz?.myScore,
     activeQuiz?.id,
   );
+
+  console.log('score ahihi', score)
 
   useFocusEffect(
     useCallback(() => {
